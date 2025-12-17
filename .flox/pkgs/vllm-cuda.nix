@@ -77,11 +77,20 @@ in python3Packages.buildPythonPackage rec {
     packaging
   ] ++ lib.optionals enableCuda [
     cudaPackages.cuda_nvcc
+    cudaPackages.cuda_nvcc.dev or cudaPackages.cuda_nvcc
+    cudaPackages.cuda_cudart
+    cudaPackages.autoAddDriverRunpath
   ];
 
   # Runtime dependencies
-  propagatedBuildInputs = with python3Packages; [
-    torch
+  # Use CUDA-enabled torch from flox-cuda catalog when CUDA is enabled
+  torchPackage = if enableCuda
+    then python3Packages.torchWithCuda or python3Packages.torch
+    else python3Packages.torch;
+
+  propagatedBuildInputs = [
+    torchPackage
+  ] ++ (with python3Packages; [
     transformers
     tokenizers
     numpy
@@ -109,7 +118,7 @@ in python3Packages.buildPythonPackage rec {
     cloudpickle
     # msgspec  # May not be available
     # gguf  # May not be available
-  ] ++ platformDeps;
+  ]) ++ platformDeps;
 
   # Environment variables that will be available during the entire build
   env = buildEnv // {
@@ -119,6 +128,10 @@ in python3Packages.buildPythonPackage rec {
   # CMake flags
   cmakeFlags = [
     "-DVLLM_PYTHON_EXECUTABLE=${python3Packages.python.interpreter}"
+  ] ++ lib.optionals enableCuda [
+    "-DCMAKE_CUDA_COMPILER=${cudaPackages.cuda_nvcc}/bin/nvcc"
+    "-DCUDA_TOOLKIT_ROOT_DIR=${cudaPackages.cuda_nvcc}"
+    "-DCUDAToolkit_ROOT=${cudaPackages.cuda_nvcc}"
   ];
 
   # Platform-specific patches

@@ -20,6 +20,10 @@ python311Full.pkg-path = "python311Full"
 gcc.pkg-path = "gcc"
 git.pkg-path = "git"
 
+# CUDA-enabled torch from flox-cuda catalog (Linux only)
+torch-cuda.pkg-path = "flox-cuda/python3Packages.torch"
+torch-cuda.systems = ["x86_64-linux", "aarch64-linux"]
+
 
 ## Environment Variables ---------------------------------------------
 ##  ... available for use in the activated environment
