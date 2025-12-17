@@ -41,6 +41,7 @@ let
       VLLM_TARGET_DEVICE = "cuda";
       TORCH_CUDA_ARCH_LIST = "7.0;7.5;8.0;8.6;8.9;9.0";
       CUDA_HOME = "${cudaPackages.cuda_nvcc}";
+      VLLM_BUILD_WITH_CUDA = "1";
     } else {
       VLLM_TARGET_DEVICE = "cpu";
       VLLM_BUILD_WITH_CUDA = "0";
@@ -55,7 +56,7 @@ in python3Packages.buildPythonPackage rec {
     owner = "vllm-project";
     repo = "vllm";
     rev = "v${version}";
-    hash = ""; # Will need to be filled in
+    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="; # Will need to be filled in with actual hash
   };
 
   # Build-time dependencies
