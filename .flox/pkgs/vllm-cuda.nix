@@ -66,6 +66,7 @@ in python3Packages.buildPythonPackage rec {
   build-system = with python3Packages; [
     setuptools
     wheel
+    scikit-build-core
   ];
 
   # Build-time dependencies
@@ -110,12 +111,15 @@ in python3Packages.buildPythonPackage rec {
     # gguf  # May not be available
   ] ++ platformDeps;
 
-  # Set build environment variables
-  preBuild = ''
-    export VLLM_PYTHON_EXECUTABLE="${python3Packages.python.interpreter}"
-    export SKBUILD_CMAKE_ARGS="-DVLLM_PYTHON_EXECUTABLE=${python3Packages.python.interpreter}"
-    ${lib.concatStringsSep "\n" (lib.mapAttrsToList (k: v: "export ${k}=${v}") buildEnv)}
-  '';
+  # Environment variables that will be available during the entire build
+  env = buildEnv // {
+    VLLM_PYTHON_EXECUTABLE = "${python3Packages.python.interpreter}";
+  };
+
+  # CMake flags
+  cmakeFlags = [
+    "-DVLLM_PYTHON_EXECUTABLE=${python3Packages.python.interpreter}"
+  ];
 
   # Platform-specific patches
   patches = lib.optionals stdenv.isDarwin [
