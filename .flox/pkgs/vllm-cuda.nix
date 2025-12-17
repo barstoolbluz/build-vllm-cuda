@@ -73,6 +73,7 @@ in python3Packages.buildPythonPackage rec {
     ninja
     cmake
     pybind11
+    packaging
   ] ++ lib.optionals enableCuda [
     cudaPackages.cuda_nvcc
   ];
@@ -111,6 +112,8 @@ in python3Packages.buildPythonPackage rec {
 
   # Set build environment variables
   preBuild = ''
+    export VLLM_PYTHON_EXECUTABLE="${python3Packages.python.interpreter}"
+    export SKBUILD_CMAKE_ARGS="-DVLLM_PYTHON_EXECUTABLE=${python3Packages.python.interpreter}"
     ${lib.concatStringsSep "\n" (lib.mapAttrsToList (k: v: "export ${k}=${v}") buildEnv)}
   '';
 
