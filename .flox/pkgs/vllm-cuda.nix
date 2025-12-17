@@ -52,17 +52,24 @@ in python3Packages.buildPythonPackage rec {
   pname = "vllm-cuda";
   inherit version;
 
+  # Use new Python packaging format
+  pyproject = true;
+
   src = fetchFromGitHub {
     owner = "vllm-project";
     repo = "vllm";
     rev = "v${version}";
-    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="; # Will need to be filled in with actual hash
+    hash = "sha256-ioAgZZbMv99UudaHtb3KQFAdjJv9GqeNDXDAqQOIMN8=";
   };
+
+  # Build system dependencies
+  build-system = with python3Packages; [
+    setuptools
+    wheel
+  ];
 
   # Build-time dependencies
   nativeBuildInputs = with python3Packages; [
-    setuptools
-    wheel
     ninja
     cmake
     pybind11
@@ -85,21 +92,21 @@ in python3Packages.buildPythonPackage rec {
     psutil
     ray
     sentencepiece
-    tensorizer
+    # tensorizer  # Not available in nixpkgs yet
     pynvml
     triton
-    xformers
-    outlines
+    # xformers  # May not be available
+    # outlines  # May not be available
     typing-extensions
     filelock
     aiohttp
     openai
     tiktoken
-    lm-format-enforcer
+    # lm-format-enforcer  # Not available in nixpkgs
     jinja2
     cloudpickle
-    msgspec
-    gguf
+    # msgspec  # May not be available
+    # gguf  # May not be available
   ] ++ platformDeps;
 
   # Set build environment variables
@@ -127,7 +134,7 @@ in python3Packages.buildPythonPackage rec {
   meta = with lib; {
     description = "High-throughput and memory-efficient inference engine for LLMs with CUDA/CPU support";
     homepage = "https://github.com/vllm-project/vllm";
-    license = licenses.apache20;
+    license = licenses.asl20;
     maintainers = with maintainers; [ ];
     platforms = platforms.unix;
     # Note which platforms have which features
