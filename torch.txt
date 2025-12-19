@@ -1,0 +1,61 @@
+barstoolbluz/pytorch-python313-cuda12_8-sm120-avx512      PyTorch optimized for NVIDIA RTX 5090 (SM120) with AVX-512 CPU instructions
+barstoolbluz/torchaudio-python313-cuda12_8-sm120-avx512   TorchAudio for NVIDIA RTX 5090 (SM120, Blackwell) + AVX-512
+barstoolbluz/torchvision-python313-cuda12_8-sm120-avx512  TorchVision for NVIDIA RTX 5090 (SM120, Blackwell) + AVX-512
+barstoolbluz/comfyui-cuda                                 ComfyUI with CUDA 12.8 optimized PyTorch for NVIDIA RTX 50-series (SM 12.0, AVX512)
+flox-cuda/noisetorch                                      Virtual microphone device with noise supression for PulseAudio
+flox-cuda/python3Packages.torch                           PyTorch: Tensors and Dynamic neural networks in Python with strong GPU acceleration
+flox-cuda/python3Packages.pytorch                         PyTorch: Tensors and Dynamic neural networks in Python with strong GPU acceleration
+flox-cuda/python3Packages.torchaudio                      PyTorch audio library
+python37Packages.torchgpipe                               GPipe implemented in Pytorch and optimized for CUDA rather than TPU
+python38Packages.torchgpipe                               GPipe implemented in Pytorch and optimized for CUDA rather than TPU
+python39Packages.torchgpipe                               GPipe implemented in Pytorch and optimized for CUDA rather than TPU
+flox-cuda/python3Packages.torchvision                     PyTorch vision library
+python310Packages.torchgpipe                              GPipe implemented in Pytorch and optimized for CUDA rather than TPU
+python311Packages.torchgpipe                              GPipe implemented in Pytorch and optimized for CUDA rather than TPU
+python312Packages.torchgpipe                              GPipe implemented in Pytorch and optimized for CUDA rather than TPU
+python39Packages.torchWithCuda                            PyTorch: Tensors and Dynamic neural networks in Python with strong GPU acceleration
+python310Packages.torchWithCuda                           PyTorch: Tensors and Dynamic neural networks in Python with strong GPU acceleration
+python311Packages.torchWithCuda                           PyTorch: Tensors and Dynamic neural networks in Python with strong GPU acceleration
+python312Packages.torchWithCuda                           PyTorch: Tensors and Dynamic neural networks in Python with strong GPU acceleration
+python313Packages.torchWithCuda                           PyTorch: Tensors and Dynamic neural networks in Python with strong GPU acceleration
+python312Packages.pytorch-memlab                          Simple and accurate CUDA memory management laboratory for pytorch
+python313Packages.pytorch-memlab                          Simple and accurate CUDA memory management laboratory for pytorch
+python37Packages.pytorchWithCuda                          Open source, prototype-to-production deep learning platform
+python38Packages.pytorchWithCuda                          Open source, prototype-to-production deep learning platform
+python39Packages.pytorchWithCuda                          PyTorch: Tensors and Dynamic neural networks in Python with strong GPU acceleration
+python310Packages.pytorchWithCuda                         PyTorch: Tensors and Dynamic neural networks in Python with strong GPU acceleration
+python311Packages.pytorchWithCuda                         PyTorch: Tensors and Dynamic neural networks in Python with strong GPU acceleration
+python312Packages.pytorchWithCuda                         PyTorch: Tensors and Dynamic neural networks in Python with strong GPU acceleration
+python313Packages.pytorchWithCuda                         PyTorch: Tensors and Dynamic neural networks in Python with strong GPU acceleration
+python39Packages.torchWithoutCuda                         PyTorch: Tensors and Dynamic neural networks in Python with strong GPU acceleration
+flox-cuda/python3Packages.pytorch-lightning               Lightweight PyTorch wrapper for machine learning researchers
+python310Packages.torchWithoutCuda                        PyTorch: Tensors and Dynamic neural networks in Python with strong GPU acceleration
+python311Packages.torchWithoutCuda                        PyTorch: Tensors and Dynamic neural networks in Python with strong GPU acceleration
+python312Packages.torchWithoutCuda                        PyTorch: Tensors and Dynamic neural networks in Python with strong GPU acceleration
+python313Packages.torchWithoutCuda                        PyTorch: Tensors and Dynamic neural networks in Python with strong GPU acceleration
+python311Packages.torch-pitch-shift                       Pitch-shift audio clips quickly with PyTorch (CUDA supported)! Additional utilities for searching efficient transformations are included
+python312Packages.torch-pitch-shift                       Pitch-shift audio clips quickly with PyTorch (CUDA supported)! Additional utilities for searching efficient transformations are included
+python313Packages.torch-pitch-shift                       Pitch-shift audio clips quickly with PyTorch (CUDA supported)! Additional utilities for searching efficient transformations are included
+python37Packages.pytorchWithoutCuda                       Open source, prototype-to-production deep learning platform
+python38Packages.pytorchWithoutCuda                       Open source, prototype-to-production deep learning platform
+python39Packages.pytorchWithoutCuda                       PyTorch: Tensors and Dynamic neural networks in Python with strong GPU acceleration
+python310Packages.pytorchWithoutCuda                      PyTorch: Tensors and Dynamic neural networks in Python with strong GPU acceleration
+python311Packages.pytorchWithoutCuda                      PyTorch: Tensors and Dynamic neural networks in Python with strong GPU acceleration
+python312Packages.pytorchWithoutCuda                      PyTorch: Tensors and Dynamic neural networks in Python with strong GPU acceleration
+python313Packages.pytorchWithoutCuda                      PyTorch: Tensors and Dynamic neural networks in Python with strong GPU acceleration
+flox/pytorch-python313-cuda12_8-sm86-avx2                 PyTorch for NVIDIA RTX 3090/A40 (SM86, Ampere) with CUDA
+flox/torchaudio-python313-cuda12_8-sm86-avx2              TorchAudio for NVIDIA Ampere RTX 3090/A40 (SM86) + AVX2
+flox/torchvision-python313-cuda12_8-sm86-avx2             TorchVision for NVIDIA Ampere RTX 3090/A40 (SM86) + AVX2
+flox-cuda/python3Packages.Keras                           Multi-backend implementation of the Keras API, with support for TensorFlow, JAX, and PyTorch
+flox-cuda/python3Packages.keras                           Multi-backend implementation of the Keras API, with support for TensorFlow, JAX, and PyTorch
+python311Packages.julius                                  Nice DSP sweets: resampling, FFT Convolutions. All with PyTorch, differentiable and with CUDA support
+python312Packages.julius                                  Nice DSP sweets: resampling, FFT Convolutions. All with PyTorch, differentiable and with CUDA support
+python313Packages.julius                                  Nice DSP sweets: resampling, FFT Convolutions. All with PyTorch, differentiable and with CUDA support
+flox-cuda/python3Packages.transformers                    Natural Language Processing for TensorFlow 2.0 and PyTorch
+python310Packages.bitsandbytes                            8-bit CUDA functions for PyTorch
+python311Packages.bitsandbytes                            8-bit CUDA functions for PyTorch
+python312Packages.bitsandbytes                            8-bit CUDA functions for PyTorch
+python313Packages.bitsandbytes                            8-bit CUDA functions for PyTorch
+python311Packages.causal-conv1d                           Causal depthwise conv1d in CUDA with a PyTorch interface
+python312Packages.causal-conv1d                           Causal depthwise conv1d in CUDA with a PyTorch interface
+python313Packages.causal-conv1d                           Causal depthwise conv1d in CUDA with a PyTorch interface

@@ -19,9 +19,14 @@ version = 1
 python311Full.pkg-path = "python311Full"
 gcc.pkg-path = "gcc"
 git.pkg-path = "git"
+pip.pkg-path = "python311Packages.pip"
+setuptools.pkg-path = "python311Packages.setuptools"
+wheel.pkg-path = "python311Packages.wheel"
+cmake.pkg-path = "cmake"
+ninja.pkg-path = "ninja"
 
-# CUDA-enabled torch from flox-cuda catalog (Linux only)
-torch-cuda.pkg-path = "flox-cuda/python3Packages.torch"
+# CUDA-enabled torch for Python 3.11 (Linux only)
+torch-cuda.pkg-path = "python311Packages.torchWithCuda"
 torch-cuda.systems = ["x86_64-linux", "aarch64-linux"]
 
 
@@ -86,14 +91,31 @@ torch-cuda.systems = ["x86_64-linux", "aarch64-linux"]
 ##  $ flox publish
 ## ------------------------------------------------------------------
 [build]
-# [build.myproject]
-# description = "The coolest project ever"
-# version = "0.0.1"
-# command = """
-#   mkdir -p $out/bin
-#   cargo build --release
-#   cp target/release/myproject $out/bin/myproject
-# """
+# Build vLLM with network access (required for downloading dependencies)
+[build.vllm-cuda-manifest]
+description = "vLLM with CUDA support - built with manifest mode"
+version = "0.12.0"
+sandbox = "off"  # Required for network access to download dependencies
+command = """
+  cd /home/daedalus/dev/builds/build-vllm-cuda
+
+  # Clone vLLM source
+  git clone --depth 1 --branch v0.12.0 https://github.com/vllm-project/vllm.git vllm-src || true
+  cd vllm-src
+
+  # Build and install
+  export VLLM_TARGET_DEVICE=cuda
+  export VLLM_BUILD_WITH_CUDA=1
+  export TORCH_CUDA_ARCH_LIST="7.0;7.5;8.0;8.6;8.9;9.0"
+
+  python3 -m pip install --no-deps --prefix=$out .
+
+  # Create wrapper script
+  mkdir -p $out/bin
+  echo '#!/usr/bin/env python3' > $out/bin/vllm
+  echo 'import sys; sys.path.insert(0, "'$out'/lib/python3.11/site-packages"); from vllm.entrypoints.api_server import main; main()' >> $out/bin/vllm
+  chmod +x $out/bin/vllm
+"""
 
 
 ## Other Environment Options -----------------------------------------

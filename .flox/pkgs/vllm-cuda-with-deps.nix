@@ -4,16 +4,23 @@
   python3Packages,
   fetchFromGitHub,
   git,
+  cmake,
+  ninja,
   cudaPackages ? null,
   darwin ? null,
-  rocmPackages ? null,
   enableCuda ? stdenv.isLinux && cudaPackages != null,
-  enableRocm ? false,
-  enableCpu ? !enableCuda && !enableRocm,
 }:
 
 let
   version = "0.12.0";
+
+  # Pre-fetch the cutlass dependency
+  cutlass = fetchFromGitHub {
+    owner = "nvidia";
+    repo = "cutlass";
+    rev = "bf9da7b76c766d7ee7d536afc77880a4ef1f1156";  # v3.6.0
+    hash = "sha256-FbMVqR4eZyum5w4Dj5qJgBPOS66sTem/qKZjYIK/7sg=";
+  };
 
   # Platform-specific dependencies
   platformDeps =
@@ -24,7 +31,6 @@ let
         libcublas
         cuda_nvml_dev
         cudnn
-        cuda_nvtx
       ]
     else if stdenv.isDarwin then
       with darwin.apple_sdk.frameworks; [
@@ -36,19 +42,6 @@ let
       ]
     else
       [];
-
-  # Build flags based on platform
-  buildEnv =
-    if enableCuda then {
-      VLLM_TARGET_DEVICE = "cuda";
-      TORCH_CUDA_ARCH_LIST = "7.0;7.5;8.0;8.6;8.9;9.0";
-      CUDA_HOME = "${cudaPackages.cuda_nvcc}";
-      VLLM_BUILD_WITH_CUDA = "1";
-    } else {
-      VLLM_TARGET_DEVICE = "cpu";
-      VLLM_BUILD_WITH_CUDA = "0";
-      MAX_JOBS = "4"; # Limit parallel jobs for CPU builds
-    };
 
 in python3Packages.buildPythonPackage rec {
   pname = "vllm-cuda";
@@ -64,6 +57,20 @@ in python3Packages.buildPythonPackage rec {
     hash = "sha256-ioAgZZbMv99UudaHtb3KQFAdjJv9GqeNDXDAqQOIMN8=";
   };
 
+  # Patch to use pre-fetched cutlass
+  postPatch = ''
+    # Replace the FetchContent with our pre-fetched version
+    substituteInPlace CMakeLists.txt \
+      --replace "FetchContent_Declare(
+        cutlass
+        GIT_REPOSITORY https://github.com/nvidia/cutlass.git" \
+      "FetchContent_Declare(
+        cutlass
+        SOURCE_DIR ${cutlass}" \
+      --replace "GIT_TAG" "# GIT_TAG" \
+      --replace "GIT_PROGRESS TRUE" "# GIT_PROGRESS TRUE"
+  '';
+
   # Build system dependencies
   build-system = with python3Packages; [
     setuptools
@@ -73,22 +80,19 @@ in python3Packages.buildPythonPackage rec {
 
   # Build-time dependencies
   nativeBuildInputs = [
-    git  # Required for FetchContent to clone dependencies
-    stdenv.cc
-    python3Packages.ninja
-    python3Packages.cmake
+    git
+    cmake
+    ninja
     python3Packages.pybind11
     python3Packages.packaging
   ] ++ lib.optionals enableCuda [
     cudaPackages.cuda_nvcc
-    cudaPackages.cuda_nvcc.dev or cudaPackages.cuda_nvcc
     cudaPackages.cuda_cudart
-    cudaPackages.cuda_nvtx
   ];
 
   # Runtime dependencies
-  propagatedBuildInputs = (with python3Packages; [
-    (if enableCuda then torchWithCuda else torch)
+  propagatedBuildInputs = with python3Packages; [
+    torch
     transformers
     tokenizers
     numpy
@@ -101,66 +105,45 @@ in python3Packages.buildPythonPackage rec {
     psutil
     ray
     sentencepiece
-    # tensorizer  # Not available in nixpkgs yet
     pynvml
     triton
-    # xformers  # May not be available
-    # outlines  # May not be available
     typing-extensions
     filelock
     aiohttp
     openai
     tiktoken
-    # lm-format-enforcer  # Not available in nixpkgs
     jinja2
     cloudpickle
-    # msgspec  # May not be available
-    # gguf  # May not be available
-  ]) ++ platformDeps;
+  ] ++ platformDeps;
 
-  # Environment variables that will be available during the entire build
-  env = buildEnv // {
+  # Environment variables
+  env = {
+    VLLM_TARGET_DEVICE = if enableCuda then "cuda" else "cpu";
+    VLLM_BUILD_WITH_CUDA = if enableCuda then "1" else "0";
     VLLM_PYTHON_EXECUTABLE = "${python3Packages.python.interpreter}";
+    TORCH_CUDA_ARCH_LIST = lib.optionalString enableCuda "7.0;7.5;8.0;8.6;8.9;9.0";
+    CUDA_HOME = lib.optionalString enableCuda "${cudaPackages.cuda_nvcc}";
   };
 
   # CMake flags
   cmakeFlags = [
     "-DVLLM_PYTHON_EXECUTABLE=${python3Packages.python.interpreter}"
+    "-DFETCHCONTENT_FULLY_DISCONNECTED=ON"
+    "-DFETCHCONTENT_SOURCE_DIR_CUTLASS=${cutlass}"
   ] ++ lib.optionals enableCuda [
     "-DCMAKE_CUDA_COMPILER=${cudaPackages.cuda_nvcc}/bin/nvcc"
     "-DCUDA_TOOLKIT_ROOT_DIR=${cudaPackages.cuda_nvcc}"
-    "-DCUDAToolkit_ROOT=${cudaPackages.cuda_nvcc}"
-  ];
-
-  # Platform-specific patches
-  patches = lib.optionals stdenv.isDarwin [
-    # Patches for Darwin CPU-only build would go here
   ];
 
   # Disable tests that require GPU
   doCheck = false;
 
-  # Additional setup for CPU-only builds
-  postPatch = lib.optionalString enableCpu ''
-    substituteInPlace setup.py \
-      --replace "torch.cuda.is_available()" "False" \
-      --replace "VLLM_TARGET_DEVICE = 'cuda'" "VLLM_TARGET_DEVICE = 'cpu'"
-  '';
-
   pythonImportsCheck = [ "vllm" ];
 
   meta = with lib; {
-    description = "High-throughput and memory-efficient inference engine for LLMs with CUDA/CPU support";
+    description = "High-throughput and memory-efficient inference engine for LLMs";
     homepage = "https://github.com/vllm-project/vllm";
     license = licenses.asl20;
-    maintainers = with maintainers; [ ];
     platforms = platforms.unix;
-    # Note which platforms have which features
-    longDescription = ''
-      vLLM inference engine with:
-      - CUDA support on Linux (x86_64, aarch64)
-      - CPU-only support on all Unix platforms
-      - Experimental Metal support on Darwin (performance limited)
-    '';
   };
 }
